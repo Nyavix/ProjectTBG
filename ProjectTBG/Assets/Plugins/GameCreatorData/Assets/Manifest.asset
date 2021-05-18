@@ -112,32 +112,6 @@ MonoBehaviour:
       dataPaths:
       - Assets/Plugins/GameCreatorData/Shooter/
   - module:
-      moduleID: com.gamecreator.examples.traversal
-      version:
-        major: 0
-        minor: 1
-        patch: 3
-      displayName: Traversal Examples
-      description: Example scene for the Traversal module, showing how to use all
-        the built-in parkour abilities
-      category: Examples
-      dependencies:
-      - moduleID: com.gamecreator.module.traversal
-        version:
-          major: 0
-          minor: 1
-          patch: 3
-      tags:
-      - examples
-      - traversal
-      authorName: Marti-Joan Nogue Coll
-      authorMail: marti@catsoft-studios.com
-      authorSite: https://gamecreator.io
-      includesData: 0
-      codePaths:
-      - Assets/Plugins/GameCreator/TraversalExamples/
-      dataPaths: []
-  - module:
       moduleID: com.gamecreator.module.behavior
       version:
         major: 1
@@ -218,4 +192,30 @@ MonoBehaviour:
       includesData: 0
       codePaths:
       - Assets/Plugins/GameCreator/Traversal/
+      dataPaths: []
+  - module:
+      moduleID: com.gamecreator.examples.traversal
+      version:
+        major: 0
+        minor: 1
+        patch: 3
+      displayName: Traversal Examples
+      description: Example scene for the Traversal module, showing how to use all
+        the built-in parkour abilities
+      category: Examples
+      dependencies:
+      - moduleID: com.gamecreator.module.traversal
+        version:
+          major: 0
+          minor: 1
+          patch: 3
+      tags:
+      - examples
+      - traversal
+      authorName: Marti-Joan Nogue Coll
+      authorMail: marti@catsoft-studios.com
+      authorSite: https://gamecreator.io
+      includesData: 0
+      codePaths:
+      - Assets/Plugins/GameCreator/TraversalExamples/
       dataPaths: []
