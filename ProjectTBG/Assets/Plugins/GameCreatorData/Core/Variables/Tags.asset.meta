@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:ProjectTBG/Assets/Plugins/GameCreatorData/Core/Variables/Tags.asset.meta
 guid: c547033a3a778184c987a371148c7155
 NativeFormatImporter:
+=======
+guid: 7446aafc71e004299bb1afc55e391b33
+DefaultImporter:
+>>>>>>> main:ProjectTBG/Assets/Plugins/GameCreator/BehaviorExamples/Example-1.unity.meta
   externalObjects: {}
   mainObjectFileID: 11400000
   userData: 
