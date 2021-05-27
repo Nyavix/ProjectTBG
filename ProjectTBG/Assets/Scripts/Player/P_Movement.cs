@@ -16,8 +16,7 @@ public enum MovementState
 {
     Paused,
     groundMove,
-    wallSlide,
-    LedgeHang
+    wallJump,
 }
 
 public class P_Movement : MonoBehaviour
@@ -69,10 +68,9 @@ public class P_Movement : MonoBehaviour
     float smoothDX;
     Vector2 mousePos;
     Vector3 moveDirection;
-    Vector3 gunMomentumDir;
     Vector3 slideMoveDir;
     private Quaternion xRot;
-    float slideSpeed = 10f;
+    float slideSpeed = 12f;
     bool sliding = false;
 
     bool grounded;
@@ -84,32 +82,13 @@ public class P_Movement : MonoBehaviour
     bool stopJump;
     int wallDir;
 
-    [Header("Slide")]
-    public float slideMultiplier = 0.2f;
-    public Vector2 slideJump = new Vector2(9,9);
-    public Vector2 slideJumpHigh = new Vector2(10, 6);
-    public Vector2 slideJumpLow = new Vector2(6, 10);
-    int wallPerf;
-    int pushOff;
-
-    float ledgeDistance;
-    Vector3 hitPoint;
-    bool climbLedge;
-
-    public Vector3 stepUpOffset;
-    public Vector3 ledgeHangOffset;
     private bool facingRight;
     private RaycastHit s_Hit;
     private Vector3 contactPoint;
     private float fallStartLevel;
     private bool falling;
-    public bool hasWeapon;
-    bool shooting;
     private float angle;
     private bool canSlide;
-
-    public Vector3 climbOffset;
-    public Vector3 climbedOffset;
 
     //--------------------------//
 
@@ -129,11 +108,6 @@ public class P_Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Change move state to wallSlide if propper conditions met
-        if (moveState != MovementState.wallSlide && moveState != MovementState.LedgeHang && !grounded && WallCheck())
-        {
-            moveState = MovementState.wallSlide;
-        }
 
         //keep track of smooth value
         if (smoothDX < 0.25f && smoothDX > -0.25f && input.x == 0)
@@ -153,14 +127,6 @@ public class P_Movement : MonoBehaviour
     //Used for physics based methods and functions
     private void FixedUpdate()
     {
-        if (moveState == MovementState.LedgeHang)
-            LedgeHang();
-
-        if (moveState == MovementState.wallSlide)
-        {
-            wallSlide();
-            grounded = (controller.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
-        }
 
         if (moveState == MovementState.groundMove)
         {
@@ -245,12 +211,10 @@ public class P_Movement : MonoBehaviour
 
             moveDirection = new Vector3(smoothDX, -antiBumpFactor, 0);
             moveDirection += slideMoveDir;
-            moveDirection += gunMomentumDir*.2f;
             moveDirection *= baseSpeed;
 
             groundedTimer = groundTimeMax;
             stopJump = false;
-            gunMomentumDir = Vector3.Lerp(gunMomentumDir, Vector3.zero, 12 * Time.deltaTime);
         }
         else
         {
@@ -261,19 +225,14 @@ public class P_Movement : MonoBehaviour
                 fallStartLevel = transform.position.y;
             }
 
-            if (controller.velocity.magnitude < 12)
-                gunMomentumDir = Vector3.Lerp(gunMomentumDir, Vector3.zero, 14 * Time.deltaTime);
-            else
-                gunMomentumDir = Vector3.zero;
-
             slideMoveDir = Vector3.Lerp(slideMoveDir, Vector3.zero, 0.5f * Time.deltaTime);
             angle = 0;
 
-            moveDirection += gunMomentumDir;
-            moveDirection.x += input.x * 0.025f;
+            if((moveDirection.x < 8 && input.x > 0)|| (moveDirection.x > -8 && input.x < 0))
+            moveDirection.x += input.x * 0.5f;
         }
 
-        if (hasWeapon || grounded)
+        //if (grounded)
             HandleFlip();
 
         if (jumpTimer > 0 && groundedTimer > 0)
@@ -284,8 +243,6 @@ public class P_Movement : MonoBehaviour
         }
 
         moveDirection.y -= (gravity * gMultiplier) * Time.deltaTime;
-
-        wallPerf = 0;
     }
 
     //Handles gravity multiplier value
@@ -296,7 +253,7 @@ public class P_Movement : MonoBehaviour
         {
             gMultiplier = fallMultiplier;
         }
-        else if (moveDirection.y > 0 && stopJump || CielingCheck() || shooting) 
+        else if (moveDirection.y > 0 && stopJump || CielingCheck()) 
         {
             gMultiplier = lowJumpMultiplier;
         }
@@ -341,160 +298,15 @@ public class P_Movement : MonoBehaviour
         return false;
     }
 
-    //Checks if player by a ledge corner and return true or false
-    bool ledgeCheck()
-    {
-        if(!Physics.Raycast(transform.position + (Vector3.right * -wallDir * controller.bounds.extents.x) + Vector3.up * 1.7f, Vector3.right * -wallDir, 0.4f))
-        {
-            Debug.DrawRay(transform.position + (Vector3.right * -wallDir * controller.bounds.extents.x) + Vector3.up * 1.7f, Vector3.right * -wallDir * 0.4f, Color.red);
-
-            RaycastHit hit;
-
-            if (Physics.Raycast(transform.position + (Vector3.right * -wallDir * controller.bounds.extents.x) + Vector3.up * 1.7f + ((Vector3.right * -wallDir) * 0.45f), Vector3.down, out hit, 0.6f))
-            {
-                Debug.DrawRay(transform.position + (Vector3.right * -wallDir * controller.bounds.extents.x) + Vector3.up * 1.7f + ((Vector3.right * -wallDir) * 0.7f), Vector3.down * 0.6f, Color.cyan);
-
-                ledgeDistance = hit.distance;
-                hitPoint = hit.point;
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    //Handle wallSlide based movement
-    void wallSlide()
-    {
-        if(!WallCheck() || grounded)
-        {
-           moveState = MovementState.groundMove;
-        }
-
-        HandleFlip();
-
-        smoothDX = 0;
-        angle = 0;
-        wallPerf++;
-
-        //Handle diffrent jumps
-        if (jumpTimer > 0 && wallPerf > 4)
-        {
-            if (wallDir > 0)
-            {
-                moveDirection = slideJump;
-
-                moveState = MovementState.groundMove;
-            }
-            else if (wallDir < 0)
-            {
-                moveDirection = new Vector3(-slideJump.x, slideJump.y, 0);
-
-                moveState = MovementState.groundMove;
-            }
-
-            wallPerf = 0;
-        }
-
-        //Handle pushing off a wall
-        if (input.x == wallDir || input.y < 0)
-        {
-            pushOff++;
-            if (pushOff == 10)
-            {
-                moveDirection.x = wallDir * 3;
-                moveState = MovementState.groundMove;
-                pushOff = 0;
-            }
-        }
-        else pushOff = 0;
-
-        //Reset horizontal movement if not zero
-        if (moveDirection.x != 0)
-            moveDirection.x = Mathf.Lerp(moveDirection.x, 0, 3 * Time.deltaTime);
-
-        //Check if near a ledge
-        if (ledgeCheck())
-        {
-            if (ledgeDistance < 0.2f && ledgeDistance != 0)
-                moveState = MovementState.LedgeHang;
-        }
-
-        moveDirection += gunMomentumDir * .2f;
-
-        gunMomentumDir = Vector3.Lerp(gunMomentumDir, Vector3.zero, 16 * Time.deltaTime);
-
-        //Handle Gravity
-        if (moveDirection.y > 0)
-            moveDirection.y -= (gravity * slideMultiplier * 2.0f) * Time.deltaTime;
-        else
-            moveDirection.y -= (gravity * slideMultiplier) * Time.deltaTime;
-    }
-
-    //Hanle ledge hanging
-    void LedgeHang()
-    {
-        if (!climbLedge)
-            transform.position = new Vector3(ledgeHangOffset.x * ((facingRight) ? -1 : 1), ledgeHangOffset.y, ledgeHangOffset.z) + hitPoint;
-
-        facingRight = wallDir > 0;
-        slideMoveDir = Vector3.zero;
-        gunMomentumDir = Vector3.zero;
-
-        if (input.y > 0 || input.x == -wallDir || jumpTimer > 0)
-        {
-            climbLedge = true;
-            transform.Find("Graphics").localPosition = climbOffset;
-            moveDirection = Vector3.zero;
-            controller.enabled = false;
-        }
-        else if(input.y < 0 || input.x == wallDir)
-        {
-            moveState = MovementState.groundMove;
-            moveDirection = new Vector3(wallDir * 5,-4,0);
-            ledgeDistance = 0;
-        }
-        else
-        {
-            moveDirection = Vector3.zero;
-        }
-    }
-
-    public void EndLedgeHang()
-    {
-        moveState = MovementState.groundMove;
-        transform.position = hitPoint + climbedOffset;
-        ledgeDistance = 0;
-        climbLedge = false;
-        controller.enabled = true;
-        facingRight = wallDir < 0;
-    }
-
     void HandleFlip()
     {
-        if (climbLedge)
-            return;
-
-        if (moveState == MovementState.wallSlide)
-            facingRight = wallDir > 0;
-        else if (hasWeapon)
+        if (controller.velocity.x > 1f)
         {
-            if (pInput.currentControlScheme == "Gamepad")
-                facingRight = Look.x > 0;
-            else
-                facingRight = Look.x > transform.position.x;
+            facingRight = true;
         }
-       else
+        else if (controller.velocity.x < -1f)
         {
-            if (controller.velocity.x > 1f)
-            {
-                facingRight = true;
-            }
-            else if (controller.velocity.x < -1f)
-            {
-                facingRight = false;
-            }
+            facingRight = false;
         }
     }
 
@@ -502,8 +314,6 @@ public class P_Movement : MonoBehaviour
     {
         if(Sliding)
             slideMoveDir = vel*.2f;
-        else
-            gunMomentumDir = vel*.2f;
     }
 
     // Store point that we're in contact with for use in FixedUpdate if needed
@@ -530,21 +340,6 @@ public class P_Movement : MonoBehaviour
         get { return grounded; }
     }
 
-    public bool WallSlide
-    {
-        get { return moveState == MovementState.wallSlide; }
-    }
-
-    public bool WallHang
-    {
-        get { return moveState == MovementState.LedgeHang; }
-    }
-
-    public bool WallClimb
-    {
-        get { return climbLedge; }
-    }
-
     public int Dir
     {
         get { return wallDir; }
@@ -555,34 +350,14 @@ public class P_Movement : MonoBehaviour
         get { return facingRight; }
     }
 
-    public bool Shooting
-    {
-        set { shooting = value; }
-    }
-
-    public Vector2 Look
-    {
-        get {
-            var mPos = new Vector3(mousePos.x, mousePos.y, 7.0f);
-
-            if (pInput.currentControlScheme == "Gamepad")
-                return mPos;
-
-            Vector3 objectPos = Camera.main.WorldToScreenPoint(GetComponentInChildren<Animator>().GetBoneTransform(HumanBodyBones.Chest).position);
-            mPos.x = mPos.x - objectPos.x;
-            mPos.y = mPos.y - objectPos.y;
-            return mPos; }
-    }
-
     public float PAngle
     {
         get { return (canSlide)? Vector3.Angle(s_Hit.normal, Vector3.up) : 0; }
     }
 
-    public bool HasWeapon
+    public float XInput
     {
-        get { return hasWeapon; }
-        set { hasWeapon = value; }
+        get { return input.x; }
     }
 
     public bool Sliding
@@ -616,32 +391,6 @@ public class P_Movement : MonoBehaviour
             return;
 
         input = context.ReadValue<Vector2>();
-    }
-
-    public void MousePos(InputAction.CallbackContext context)
-    {
-        if (moveState == MovementState.Paused)
-            return;
-        if (pInput.currentControlScheme == "Gamepad")
-        {
-            if(context.ReadValue<Vector2>() != Vector2.zero)
-                mousePos = context.ReadValue<Vector2>();
-        }
-        else
-            mousePos = context.ReadValue<Vector2>();
-    }
-
-    public void Walk(InputAction.CallbackContext context)
-    {
-        if (context.action.phase == InputActionPhase.Started)
-        {
-            walk = true;
-        }
-
-        if (context.action.phase == InputActionPhase.Canceled)
-        {
-            walk = false;
-        }
     }
 
     //--------------------------//

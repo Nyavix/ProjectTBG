@@ -12,9 +12,13 @@ public class P_AnimController : MonoBehaviour
     public bool ikActive = false;
     public Transform leftHandObj = null;
 
-    public Vector3 stomachRotation;
+    private bool falling = false;
 
-    public GameObject emptyAmmoPrefab;
+    const string IdleAnimation = "Idle";
+    const string MidAirAnimation = "MidAir";
+    const string LandAnimation = "Land";
+    const string RunAnimation = "Run";
+    const string SprintAnimation = "Sprint";
 
     // Start is called before the first frame update
     void Start()
@@ -26,54 +30,34 @@ public class P_AnimController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        anim.SetBool("Grounded", pMove.Grounded);
-        anim.SetBool("Sliding", pMove.Sliding);
+        if (pMove.Grounded)
+        {
+            if (falling)
+            {
+                ChangeAnimationState(LandAnimation);
+                if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 || 
+                    (Mathf.Abs(pMove.Velocity.x) > pMove.walkSpeed && pMove.XInput != 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.6f))
+                    falling = false;
+            }
+            else
+            {
+                    ChangeAnimationState(IdleAnimation);
+            }
+        }
+        else
+        {
+            ChangeAnimationState(MidAirAnimation);
+            falling = true;
+        }
+
+
+        //anim.SetBool("Grounded", pMove.Grounded);
+        //anim.SetBool("Sliding", pMove.Sliding);
         anim.SetFloat("ySpeed", pMove.Velocity.y);
 
-        if (pMove.HasWeapon)
-        {
-            var speed = Mathf.Clamp((pMove.Velocity.x / pMove.runSpeed) * ((pMove.FacingRight) ? 1 : -1), -1, 1);
+        anim.SetFloat("Speed", Mathf.Abs(pMove.Velocity.magnitude / pMove.runSpeed));
 
-            anim.SetFloat("Speed", speed, 0.01f, Time.deltaTime);
-        }
-        else if (pMove.WallHang || pMove.WallClimb)
-            anim.SetFloat("Speed", 0);
-        else
-            anim.SetFloat("Speed", Mathf.Abs(pMove.Velocity.magnitude / pMove.runSpeed), 0.01f, Time.deltaTime);
-
-        anim.SetBool("WallHang", pMove.WallSlide || pMove.WallHang);
-        anim.SetBool("LedgeHang", pMove.WallHang);
-        anim.SetBool("LedgeClimb", pMove.WallClimb);
-        anim.SetFloat("Dir", pMove.Dir);
-
-        anim.SetBool("hasWeapon", pMove.hasWeapon && !pMove.WallClimb);
-
-        Vector3 mousePos = pMove.Look;
-
-        onRight = mousePos.x > transform.position.x;
-
-        if (!pMove.FacingRight)
-            mousePos.x *= -1;
-
-        var angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-        anim.SetFloat("Look", (pMove.HasWeapon) ? angle + (pMove.PAngle * ((pMove.FacingRight)? 1 : -1)) : 0, 0.01f, Time.deltaTime);
-    }
-
-    public void EndLedgeHang()
-    {
-        pMove.EndLedgeHang();
-    }
-
-    public void ThrowAmmo()
-    {
-        var deadAmmoCell = Instantiate(emptyAmmoPrefab, anim.GetBoneTransform(HumanBodyBones.LeftHand).position, Quaternion.Euler(Vector3.zero));
-        deadAmmoCell.GetComponent<Rigidbody>().AddForce(Vector3.right * ((pMove.FacingRight) ? -1 : 1) * 4 + Vector3.up * 2, ForceMode.Impulse);
-    }
-
-    public void Reloading(float reloadSpeed, bool reloading)
-    {
-        anim.SetFloat("ReloadSpeed", reloadSpeed);
-        anim.SetBool("Reload", reloading);
+        //anim.SetFloat("Dir", pMove.Dir);
     }
 
     //a callback for calculating IK
@@ -104,5 +88,11 @@ public class P_AnimController : MonoBehaviour
                 anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
             }
         }
+    }
+
+    void ChangeAnimationState(string newState)
+    {
+        //Play the animation
+        anim.Play(newState);
     }
 }
