@@ -372,7 +372,7 @@ public class P_Movement : MonoBehaviour
     {
         moveState = newMoveState;
     }
-
+    
     public void SetMoveDirection(Vector3 newMoveDir)
     {
         moveDirection = newMoveDir;
