@@ -365,6 +365,15 @@ public class P_Movement : MonoBehaviour
         get { return slideMoveDir != Vector3.zero && input.x < 0.2f && input.x > -0.2f; }
     }
 
+    public void SetMoveState(MovementState newMoveState)
+    {
+        moveState = newMoveState;
+    }
+    public void SetMoveDirection(Vector3 newMoveDir)
+    {
+        moveDirection = newMoveDir;
+    }
+
     //--------------------------//
     //Input Methods
 
