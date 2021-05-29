@@ -50,7 +50,6 @@ public class P_AnimController : MonoBehaviour
             falling = true;
         }
 
-
         //anim.SetBool("Grounded", pMove.Grounded);
         //anim.SetBool("Sliding", pMove.Sliding);
         anim.SetFloat("ySpeed", pMove.Velocity.y);
