@@ -228,8 +228,11 @@ public class P_Movement : MonoBehaviour
             slideMoveDir = Vector3.Lerp(slideMoveDir, Vector3.zero, 0.5f * Time.deltaTime);
             angle = 0;
 
-            if((moveDirection.x < 8 && input.x > 0)|| (moveDirection.x > -8 && input.x < 0))
-            moveDirection.x += input.x * 0.5f;
+            //if((moveDirection.x < runSpeed && input.x > 0)|| (moveDirection.x > -runSpeed && input.x < 0))
+            //    moveDirection.x += input.x * walkSpeed;
+
+            moveDirection.x = smoothDX;
+            moveDirection.x *= baseSpeed;
         }
 
         //if (grounded)
@@ -369,6 +372,7 @@ public class P_Movement : MonoBehaviour
     {
         moveState = newMoveState;
     }
+    
     public void SetMoveDirection(Vector3 newMoveDir)
     {
         moveDirection = newMoveDir;
