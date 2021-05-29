@@ -62,6 +62,7 @@ GameObject:
   - component: {fileID: 2350940967695366384}
   - component: {fileID: 2350940967695366389}
   - component: {fileID: 2350940967695366388}
+  - component: {fileID: 2683631197700289634}
   - component: {fileID: 2350940967695366390}
   m_Layer: 0
   m_Name: Player
@@ -133,15 +134,21 @@ MonoBehaviour:
   gSlideSpeed: 12
   timeTillJumpTimer: 0.1
   groundTimeMax: 0.15
-  slideMultiplier: 0.2
-  slideJump: {x: 9, y: 9}
-  slideJumpHigh: {x: 10, y: 6}
-  slideJumpLow: {x: 6, y: 10}
-  stepUpOffset: {x: 0, y: 0, z: 0}
-  ledgeHangOffset: {x: 0, y: 0, z: 0}
-  hasWeapon: 0
-  climbOffset: {x: 0, y: 0, z: 0}
-  climbedOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &2683631197700289634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2350940967695366347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ce7ec22ab9d6c47a31bb4174638666, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashSpeed: 0.5
+  dashTime: 0.15
+  dashCooldown: 1
 --- !u!114 &2350940967695366390
 MonoBehaviour:
   m_ObjectHideFlags: 0
