@@ -129,7 +129,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25754
+  m_Name: pb_Mesh20014
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -379,6 +379,9 @@ MonoBehaviour:
   m_Colliders:
   - {fileID: 1843675221}
   - {fileID: 540893592}
+  - {fileID: 540893592}
+  - {fileID: 1084912167}
+  - {fileID: 1664158283}
   m_Exclusions: []
   m_FreezeAxis: 0
   m_DistantDisable: 0
@@ -401,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baedd976e12657241bf7ff2d1c685342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Direction: 1
+  m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
   m_Bound: 0
   m_Radius: 8
@@ -3656,6 +3659,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2350940967695366384, guid: 603326baab0f2d8408c758c90676be54, type: 3}
   m_PrefabInstance: {fileID: 2350940966957757012}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1084912165 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7774620517717459388, guid: e44f30ef75586514784373a733bbeb61, type: 3}
+  m_PrefabInstance: {fileID: 1200699696}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1084912167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084912165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baedd976e12657241bf7ff2d1c685342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Direction: 1
+  m_Center: {x: 0, y: 14.3, z: 0}
+  m_Bound: 0
+  m_Radius: 9
+  m_Height: 38.9
 --- !u!1 &1185003888
 GameObject:
   m_ObjectHideFlags: 0
@@ -4285,6 +4310,28 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1329634525 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -8969417572210971711, guid: e44f30ef75586514784373a733bbeb61, type: 3}
+  m_PrefabInstance: {fileID: 1200699696}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1329634527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1329634525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baedd976e12657241bf7ff2d1c685342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Direction: 0
+  m_Center: {x: 0, y: 0, z: 0.3}
+  m_Bound: 0
+  m_Radius: 7.98
+  m_Height: 27.36
 --- !u!1 &1643005235
 GameObject:
   m_ObjectHideFlags: 0
@@ -4354,6 +4401,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7354753c9abe4a7e9e7a0527b566e0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1664158281 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6386480451222621022, guid: e44f30ef75586514784373a733bbeb61, type: 3}
+  m_PrefabInstance: {fileID: 1200699696}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1664158283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1664158281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baedd976e12657241bf7ff2d1c685342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Direction: 1
+  m_Center: {x: 0, y: 14.3, z: 0}
+  m_Bound: 0
+  m_Radius: 9
+  m_Height: 38.9
 --- !u!850595691 &1715876414
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -4489,18 +4558,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baedd976e12657241bf7ff2d1c685342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Direction: 1
+  m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
   m_Bound: 0
-  m_Radius: 8.69
-  m_Height: 23.87
+  m_Radius: 9.8
+  m_Height: 29.4
 --- !u!43 &1996183684
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25688
+  m_Name: pb_Mesh19996
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
