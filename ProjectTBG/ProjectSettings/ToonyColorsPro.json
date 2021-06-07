@@ -6,7 +6,8 @@
     "CustomOutputPath": "/JMO Assets/Toony Colors Pro/Shaders Generated/",
     "LastImplementationExportImportPath": "D:/GitHub Projects/ProjectTBG/ProjectTBG/Assets",
     "OpenedFoldouts": [
-        "LIGHTING"
+        "LIGHTING",
+        "STYLIZATION"
     ],
     "UseCustomFont": true,
     "CustomFont": {
