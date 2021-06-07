@@ -311,11 +311,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Root: {fileID: 230657458}
   m_UpdateRate: 60
-  m_UpdateMode: 0
+  m_UpdateMode: 3
   m_Damping: 0.37
   m_DampingDistrib:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.0030120478
+      value: 1.0047169
+      inSlope: -0.2973488
+      outSlope: -0.2973488
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.47734138
+    - serializedVersion: 3
+      time: 0.9939758
+      value: 0.40195435
+      inSlope: -1.9140459
+      outSlope: -1.9140459
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.054380663
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
