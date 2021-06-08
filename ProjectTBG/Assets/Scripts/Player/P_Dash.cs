@@ -9,8 +9,6 @@ public class P_Dash : MonoBehaviour
     public float dashSpeed;
     public float dashTime;
 
-    private bool dashing;
-
     private bool dashed;
     public float dashCooldown = 1f;
     private float dashTimer = 1f;
@@ -42,8 +40,7 @@ public class P_Dash : MonoBehaviour
     }
 
     IEnumerator Dash()
-    {
-        dashing = true;
+    {   
         pMove.SetMoveState(MovementState.Paused);
         float startTime = Time.time;
         if (pMove.XInput != 0)
@@ -63,11 +60,5 @@ public class P_Dash : MonoBehaviour
         }
         pMove.SetMoveState(MovementState.groundMove);
         pMove.SetMoveDirection(Vector3.zero);
-        dashing = false;
-    }
-
-    public bool Dashing
-    {
-        get { return dashing; }
     }
 }
