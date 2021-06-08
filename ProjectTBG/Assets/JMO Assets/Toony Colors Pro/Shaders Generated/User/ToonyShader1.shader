@@ -18,6 +18,15 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 		_RampSmoothing ("Smoothing", Range(0.001,1)) = 0.5
 		[TCP2Separator]
 		
+		[TCP2HeaderHelp(Specular)]
+		[Toggle(TCP2_SPECULAR)] _UseSpecular ("Enable Specular", Float) = 0
+		[TCP2ColorNoAlpha] _SpecularColor ("Specular Color", Color) = (0.5,0.5,0.5,1)
+		_SpecularSmoothness ("Smoothness", Float) = 0.2
+		_AnisotropicSpread ("Anisotropic Spread", Range(0,2)) = 1
+		_SpecularToonSize ("Toon Size", Range(0,1)) = 0.25
+		_SpecularToonSmoothness ("Toon Smoothness", Range(0.001,0.5)) = 0.05
+		[TCP2Separator]
+		
 		[ToggleOff(_RECEIVE_SHADOWS_OFF)] _ReceiveShadowsOff ("Receive Shadows", Float) = 1
 
 		//Avoid compile error if the properties are ending with a drawer
@@ -57,6 +66,11 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 			fixed4 _BaseColor;
 			float _RampThreshold;
 			float _RampSmoothing;
+			float _AnisotropicSpread;
+			float _SpecularSmoothness;
+			float _SpecularToonSize;
+			float _SpecularToonSmoothness;
+			fixed4 _SpecularColor;
 			fixed4 _SColor;
 			fixed4 _HColor;
 		CBUFFER_END
@@ -105,6 +119,10 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 			#pragma vertex Vertex
 			#pragma fragment Fragment
 
+			//--------------------------------------
+			// Toony Colors Pro 2 keywords
+			#pragma shader_feature TCP2_SPECULAR
+
 			// vertex input
 			struct Attributes
 			{
@@ -127,7 +145,9 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 			#ifdef _ADDITIONAL_LIGHTS_VERTEX
 				half3 vertexLights : TEXCOORD2;
 			#endif
-				float2 pack0 : TEXCOORD3; /* pack0.xy = texcoord0 */
+				float3 pack0 : TEXCOORD3; /* pack0.xyz = tangent */
+				float3 pack1 : TEXCOORD4; /* pack1.xyz = bitangent */
+				float2 pack2 : TEXCOORD5; /* pack2.xy = texcoord0 */
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -141,14 +161,15 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
 				// Texture Coordinates
-				output.pack0.xy.xy = input.texcoord0.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+				output.pack2.xy.xy = input.texcoord0.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
 
+				float3 worldPos = mul(unity_ObjectToWorld, input.vertex).xyz;
 				VertexPositionInputs vertexInput = GetVertexPositionInputs(input.vertex.xyz);
 			#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
 				output.shadowCoord = GetShadowCoord(vertexInput);
 			#endif
 
-				VertexNormalInputs vertexNormalInput = GetVertexNormalInputs(input.normal);
+				VertexNormalInputs vertexNormalInput = GetVertexNormalInputs(input.normal, input.tangent);
 			#ifdef _ADDITIONAL_LIGHTS_VERTEX
 				// Vertex lighting
 				output.vertexLights = VertexLighting(vertexInput.positionWS, vertexNormalInput.normalWS);
@@ -159,6 +180,10 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 
 				// normal
 				output.normal = NormalizeNormalPerVertex(vertexNormalInput.normalWS);
+
+				// tangent
+				output.pack0.xyz = vertexNormalInput.tangentWS;
+				output.pack1.xyz = vertexNormalInput.bitangentWS;
 
 				// clip position
 				output.positionCS = vertexInput.positionCS;
@@ -175,16 +200,27 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 				
 				float3 positionWS = input.worldPosAndFog.xyz;
 				float3 normalWS = NormalizeNormalPerPixel(input.normal);
+				half3 viewDirWS = SafeNormalize(GetCameraPositionWS() - positionWS);
+				half3 tangentWS = input.pack0.xyz;
+				half3 bitangentWS = input.pack1.xyz;
 
 				// Shader Properties Sampling
-				float4 __albedo = ( tex2D(_BaseMap, input.pack0.xy).rgba );
+				float4 __albedo = ( tex2D(_BaseMap, input.pack2.xy).rgba );
 				float4 __mainColor = ( _BaseColor.rgba );
 				float __alpha = ( __albedo.a * __mainColor.a );
 				float __ambientIntensity = ( 1.0 );
 				float __rampThreshold = ( _RampThreshold );
 				float __rampSmoothing = ( _RampSmoothing );
+				float __anisotropicSpread = ( _AnisotropicSpread );
+				float __specularSmoothness = ( _SpecularSmoothness );
+				float __specularToonSize = ( _SpecularToonSize );
+				float __specularToonSmoothness = ( _SpecularToonSmoothness );
+				float3 __specularColor = ( _SpecularColor.rgb );
 				float3 __shadowColor = ( _SColor.rgb );
 				float3 __highlightColor = ( _HColor.rgb );
+
+				half ndv = abs(dot(viewDirWS, normalWS));
+				half ndvRaw = ndv;
 
 				// main texture
 				half3 albedo = __albedo.rgb;
@@ -245,6 +281,22 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 				half3 accumulatedRamp = ramp * max(lightColor.r, max(lightColor.g, lightColor.b));
 				half3 accumulatedColors = ramp * lightColor.rgb;
 
+				#if defined(TCP2_SPECULAR)
+				//Anisotropic Specular
+				half3 h = normalize(lightDir + viewDirWS);
+				float ndh = max(0, dot (normalWS, h));
+				half3 binorm = bitangentWS.xyz;
+				float aX = dot(h, tangentWS) / __anisotropicSpread;
+				float aY = dot(h, binorm) / __specularSmoothness;
+				float specAniso = sqrt(max(0.0, ndl / ndvRaw)) * exp(-2.0 * (aX * aX + aY * aY) / (1.0 + ndh));
+				float spec = smoothstep(__specularToonSize + __specularToonSmoothness, __specularToonSize - __specularToonSmoothness,1 - (specAniso / (1+__specularToonSmoothness)));
+				spec = saturate(spec);
+				spec *= atten;
+				
+				//Apply specular
+				emission.rgb += spec * lightColor.rgb * __specularColor;
+				#endif
+
 				// Additional lights loop
 			#ifdef _ADDITIONAL_LIGHTS
 				uint additionalLightsCount = GetAdditionalLightsCount();
@@ -271,6 +323,21 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 					accumulatedRamp += ramp * max(lightColor.r, max(lightColor.g, lightColor.b));
 					accumulatedColors += ramp * lightColor.rgb;
 
+					#if defined(TCP2_SPECULAR)
+					//Anisotropic Specular
+					half3 h = normalize(lightDir + viewDirWS);
+					float ndh = max(0, dot (normalWS, h));
+					half3 binorm = bitangentWS.xyz;
+					float aX = dot(h, tangentWS) / __anisotropicSpread;
+					float aY = dot(h, binorm) / __specularSmoothness;
+					float specAniso = sqrt(max(0.0, ndl / ndvRaw)) * exp(-2.0 * (aX * aX + aY * aY) / (1.0 + ndh));
+					float spec = smoothstep(__specularToonSize + __specularToonSmoothness, __specularToonSize - __specularToonSmoothness,1 - (specAniso / (1+__specularToonSmoothness)));
+					spec = saturate(spec);
+					spec *= atten;
+					
+					//Apply specular
+					emission.rgb += spec * lightColor.rgb * __specularColor;
+					#endif
 				}
 			#endif
 			#ifdef _ADDITIONAL_LIGHTS_VERTEX
@@ -315,7 +382,9 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 			struct Varyings
 			{
 				float4 positionCS     : SV_POSITION;
-				float2 pack0 : TEXCOORD1; /* pack0.xy = texcoord0 */
+				float3 normal         : NORMAL;
+				float3 pack0 : TEXCOORD1; /* pack0.xyz = positionWS */
+				float2 pack1 : TEXCOORD2; /* pack1.xy = texcoord0 */
 			#if defined(DEPTH_ONLY_PASS)
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
@@ -346,8 +415,15 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 				#endif
 
+				float3 worldNormalUv = mul(unity_ObjectToWorld, float4(input.normal, 1.0)).xyz;
+
 				// Texture Coordinates
-				output.pack0.xy.xy = input.texcoord0.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+				output.pack1.xy.xy = input.texcoord0.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+
+				float3 worldPos = mul(unity_ObjectToWorld, input.vertex).xyz;
+				VertexPositionInputs vertexInput = GetVertexPositionInputs(input.vertex.xyz);
+				output.normal = NormalizeNormalPerVertex(worldNormalUv);
+				output.pack0.xyz = vertexInput.positionWS;
 
 				#if defined(DEPTH_ONLY_PASS)
 					output.positionCS = TransformObjectToHClip(input.vertex.xyz);
@@ -366,10 +442,17 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 					UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 				#endif
 
+				float3 positionWS = input.pack0.xyz;
+				float3 normalWS = NormalizeNormalPerPixel(input.normal);
+
 				// Shader Properties Sampling
-				float4 __albedo = ( tex2D(_BaseMap, input.pack0.xy).rgba );
+				float4 __albedo = ( tex2D(_BaseMap, input.pack1.xy).rgba );
 				float4 __mainColor = ( _BaseColor.rgba );
 				float __alpha = ( __albedo.a * __mainColor.a );
+
+				half3 viewDirWS = SafeNormalize(GetCameraPositionWS() - positionWS);
+				half ndv = abs(dot(viewDirWS, normalWS));
+				half ndvRaw = ndv;
 
 				half3 albedo = __albedo.rgb;
 				half alpha = __alpha;
@@ -451,5 +534,5 @@ Shader "Toony Colors Pro 2/User/ToonyShader1"
 	CustomEditor "ToonyColorsPro.ShaderGenerator.MaterialInspector_SG2"
 }
 
-/* TCP_DATA u config(unity:"2020.3.7f1";ver:"2.7.1";tmplt:"SG2_Template_URP";features:list["UNITY_5_4","UNITY_5_5","UNITY_5_6","UNITY_2017_1","UNITY_2018_1","UNITY_2018_2","UNITY_2018_3","UNITY_2019_1","UNITY_2019_2","UNITY_2019_3","UNITY_2020_1","TEMPLATE_LWRP"];flags:list[];flags_extra:dict[];keywords:dict[RENDER_TYPE="Opaque",RampTextureDrawer="[TCP2Gradient]",RampTextureLabel="Ramp Texture",SHADER_TARGET="3.0"];shaderProperties:list[];customTextures:list[];codeInjection:codeInjection(injectedFiles:list[];mark:False);matLayers:list[]) */
-/* TCP_HASH 574acb369196dde65d3ee82dd4af3e74 */
+/* TCP_DATA u config(unity:"2020.3.7f1";ver:"2.7.1";tmplt:"SG2_Template_URP";features:list["UNITY_5_4","UNITY_5_5","UNITY_5_6","UNITY_2017_1","UNITY_2018_1","UNITY_2018_2","UNITY_2018_3","UNITY_2019_1","UNITY_2019_2","UNITY_2019_3","UNITY_2020_1","SPECULAR","SPECULAR_TOON","SPECULAR_SHADER_FEATURE","TEMPLATE_LWRP","SPECULAR_ANISOTROPIC"];flags:list[];flags_extra:dict[];keywords:dict[RENDER_TYPE="Opaque",RampTextureDrawer="[TCP2Gradient]",RampTextureLabel="Ramp Texture",SHADER_TARGET="3.0"];shaderProperties:list[];customTextures:list[];codeInjection:codeInjection(injectedFiles:list[];mark:False);matLayers:list[]) */
+/* TCP_HASH 8a51a882b130263a6a43ac387f3c688d */
