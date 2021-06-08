@@ -1,6 +1,3 @@
 m_EditorVersion: 2020.3.8f1
 m_EditorVersionWithRevision: 2020.3.8f1 (507919d4fff5)
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
