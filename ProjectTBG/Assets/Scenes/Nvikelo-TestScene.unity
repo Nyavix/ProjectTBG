@@ -1980,7 +1980,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 631059096}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.00000029802322, y: 0.82211757, z: -10.52}
+  m_LocalPosition: {x: -0.00000017881393, y: 0.7320508, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1206724338}
@@ -2763,9 +2763,25 @@ MonoBehaviour:
   assetGuid: 
   m_Mesh: {fileID: 116269736}
   m_IsSelectable: 1
-  m_SelectedFaces: 
-  m_SelectedEdges: []
-  m_SelectedVertices: 
+  m_SelectedFaces: 0d0000000e000000
+  m_SelectedEdges:
+  - a: 52
+    b: 53
+  - a: 54
+    b: 52
+  - a: 53
+    b: 55
+  - a: 55
+    b: 54
+  - a: 56
+    b: 57
+  - a: 58
+    b: 56
+  - a: 57
+    b: 59
+  - a: 59
+    b: 58
+  m_SelectedVertices: 3400000035000000360000003700000038000000390000003a0000003b000000
 --- !u!4 &844716683
 Transform:
   m_ObjectHideFlags: 0
@@ -2932,7 +2948,7 @@ MonoBehaviour:
   m_TargetMovementOnly: 0
   m_ScreenX: 0.5
   m_ScreenY: 0.65
-  m_CameraDistance: 10.52
+  m_CameraDistance: 10
   m_DeadZoneWidth: 0.08
   m_DeadZoneHeight: 0.06
   m_DeadZoneDepth: 9
@@ -3167,8 +3183,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1326184852}
-  m_LocalPosition: {x: -0.00000029802322, y: 0.82211757, z: -10.52}
-
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.00000017881393, y: 0.7320508, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1217400829}
