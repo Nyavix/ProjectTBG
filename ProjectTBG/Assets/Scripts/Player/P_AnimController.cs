@@ -10,10 +10,13 @@ public class P_AnimController : MonoBehaviour
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     P_Combat pCombat;
     P_Dash pDash;
 
+=======
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
 >>>>>>> parent of 62a5905 (Dash animation)
 =======
@@ -34,11 +37,14 @@ public class P_AnimController : MonoBehaviour
     const string SprintAnimation = "Sprint";
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     //Combat Animations
     const string B_Attack1Animation = "B_Attack 1";
     const string B_Attack2Animation = "B_Attack 2";
     const string B_Attack3Animation = "B_Attack 3";
+=======
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
 >>>>>>> parent of 62a5905 (Dash animation)
 =======
@@ -52,10 +58,13 @@ public class P_AnimController : MonoBehaviour
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         pCombat = GetComponentInParent<P_Combat>();
 
         pDash = GetComponentInParent<P_Dash>();
 
+=======
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
 >>>>>>> parent of 62a5905 (Dash animation)
 =======
@@ -75,6 +84,7 @@ public class P_AnimController : MonoBehaviour
                 if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 || 
                     (Mathf.Abs(pMove.Velocity.x) > pMove.walkSpeed && pMove.XInput != 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.6f))
                     falling = false;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
             }
@@ -104,6 +114,13 @@ public class P_AnimController : MonoBehaviour
                     ChangeAnimationState(IdleAnimation);
 >>>>>>> parent of 62a5905 (Dash animation)
             }
+=======
+            }
+            else
+            {
+                    ChangeAnimationState(IdleAnimation);
+            }
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
             }
             else

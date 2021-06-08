@@ -2146,7 +2146,11 @@ Transform:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_LocalPosition: {x: -0.00000029802322, y: 0.82211757, z: -10.52}
+=======
+  m_LocalPosition: {x: -0.00000035762787, y: 0.7320508, z: -10}
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
   m_LocalPosition: {x: -0.00000035762787, y: 0.7320508, z: -10}
 >>>>>>> parent of 62a5905 (Dash animation)
@@ -2963,7 +2967,10 @@ Transform:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
 >>>>>>> parent of 62a5905 (Dash animation)
 =======
@@ -3141,7 +3148,11 @@ MonoBehaviour:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_CameraDistance: 10.52
+=======
+  m_CameraDistance: 10
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
   m_CameraDistance: 10
 >>>>>>> parent of 62a5905 (Dash animation)
@@ -3393,6 +3404,9 @@ Transform:
   m_LocalPosition: {x: -0.00000035762787, y: 0.7320508, z: -10}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 62a5905 (Dash animation)
+=======
 >>>>>>> parent of 62a5905 (Dash animation)
 =======
 >>>>>>> parent of 62a5905 (Dash animation)
