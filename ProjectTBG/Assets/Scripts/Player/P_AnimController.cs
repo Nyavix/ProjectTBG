@@ -7,6 +7,7 @@ public class P_AnimController : MonoBehaviour
     Animator anim;
 
     P_Movement pMove;
+    P_Dash pDash;
     private bool onRight;
 
     public bool ikActive = false;
@@ -17,37 +18,46 @@ public class P_AnimController : MonoBehaviour
     const string IdleAnimation = "Idle";
     const string MidAirAnimation = "MidAir";
     const string LandAnimation = "Land";
-    const string RunAnimation = "Run";
     const string SprintAnimation = "Sprint";
+    const string DashAnimation = "Dash";
+
+    private float returnIdle;
+    private static float idleReturnTime = 0.2f;
 
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         pMove = GetComponentInParent<P_Movement>();
+        pDash = GetComponentInParent<P_Dash>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (pMove.Grounded)
+        if (pDash.Dashing)
+        {
+            ChangeAnimationState(DashAnimation);
+            returnIdle = idleReturnTime - 0.05f;
+        }
+        else if (pMove.Grounded)
         {
             if (falling)
             {
                 ChangeAnimationState(LandAnimation);
-                if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 || 
-                    (Mathf.Abs(pMove.Velocity.x) > pMove.walkSpeed && pMove.XInput != 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.6f))
-                    falling = false;
+                falling = false;
             }
-            else
-            {
-                    ChangeAnimationState(IdleAnimation);
-            }
+
+            if(returnIdle > idleReturnTime)
+                ChangeAnimationState(IdleAnimation);
+
+            returnIdle += Time.deltaTime;
         }
         else
         {
             ChangeAnimationState(MidAirAnimation);
             falling = true;
+            returnIdle = 0;
         }
 
         //anim.SetBool("Grounded", pMove.Grounded);
