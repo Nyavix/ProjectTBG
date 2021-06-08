@@ -7,7 +7,10 @@ public class P_AnimController : MonoBehaviour
     Animator anim;
 
     P_Movement pMove;
+
+    P_Combat pCombat;
     P_Dash pDash;
+
     private bool onRight;
 
     public bool ikActive = false;
@@ -24,12 +27,20 @@ public class P_AnimController : MonoBehaviour
     private float returnIdle;
     private static float idleReturnTime = 0.2f;
 
+    //Combat Animations
+    const string B_Attack1Animation = "B_Attack 1";
+    const string B_Attack2Animation = "B_Attack 2";
+    const string B_Attack3Animation = "B_Attack 3";
+
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         pMove = GetComponentInParent<P_Movement>();
+        pCombat = GetComponentInParent<P_Combat>();
+
         pDash = GetComponentInParent<P_Dash>();
+
     }
 
     // Update is called once per frame
@@ -45,7 +56,29 @@ public class P_AnimController : MonoBehaviour
             if (falling)
             {
                 ChangeAnimationState(LandAnimation);
+                if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 || 
+                    (Mathf.Abs(pMove.Velocity.x) > pMove.walkSpeed && pMove.XInput != 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.6f))
+                    falling = false;
+            }
+            else if(pCombat.inputReceived)
+            {
+                ChangeAnimationState(B_Attack1Animation);
+                if(anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+                {
+                    
+                    pCombat.inputReceived = false;
+                    pCombat.InputManager();
+                    ChangeAnimationState(B_Attack2Animation);
+                    Debug.Log(B_Attack2Animation);
+                }
+                    
+            }
+            else
+            {
+                    ChangeAnimationState(IdleAnimation);
+
                 falling = false;
+
             }
 
             if(returnIdle > idleReturnTime)
