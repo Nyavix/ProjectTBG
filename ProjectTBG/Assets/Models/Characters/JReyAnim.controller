@@ -28,6 +28,7 @@ AnimatorState:
   m_TimeParameter: 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!114 &-7643542515550123002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -189,6 +190,8 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+=======
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
 >>>>>>> parent of 62a5905 (Dash animation)
 =======
@@ -376,6 +379,7 @@ AnimatorStateMachine:
     m_State: {fileID: 7476328571887234021}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     m_Position: {x: 300, y: -100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1198856338940747151}
@@ -392,6 +396,9 @@ AnimatorStateMachine:
 =======
     m_Position: {x: 300, y: 0, z: 0}
 >>>>>>> parent of 62a5905 (Dash animation)
+=======
+    m_Position: {x: 300, y: 0, z: 0}
+>>>>>>> parent of 62a5905 (Dash animation)
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -402,6 +409,7 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 940, y: 390, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 2148028881619183898}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!114 &4136909977445888731
@@ -523,6 +531,8 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+=======
+>>>>>>> parent of 62a5905 (Dash animation)
 =======
 >>>>>>> parent of 62a5905 (Dash animation)
 =======
